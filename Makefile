@@ -28,12 +28,13 @@ LIBSOURCES			+= system_stm32f10x.c
 LIBSOURCES			+= misc.c
 LIBSOURCES			+= stm32f10x_rcc.c
 LIBSOURCES			+= stm32f10x_gpio.c 
+LIBSOURCES			+= stm32f10x_tim.c 
 LIBSOURCES			+= stm32f10x_usart.c 
 
 SOURCES				+= start.s
 SOURCES				+= main.c
 SOURCES				+= led.c
-SOURCES				+= delay.c
+SOURCES				+= timer.c
 SOURCES				+= usart.c
 
 LD_FILE				:= $(DIRECTORY)linker.lds
