@@ -74,6 +74,3 @@ $(ELF_FILE): $(OBJECTFILES)
 .PHONY: clean
 clean:
 	rm -f $(subst /,/,$(CLEAR)) *.hex *.bin *.elf
-
-install:
-

@@ -1,9 +1,9 @@
     .syntax	unified
     .arch	armv7-m
-    /* 定义栈大小 */
+    /* define stack size */
     .section .stack
     .align 3
-    .equ	Stack_Size,	0xC00
+    .equ	Stack_Size,	0x400
     .equ	BootRAM,	0xF1E0F85F
     .globl	__StackTop
     .globl	__StackLimit
@@ -12,10 +12,10 @@ __StackLimit:
     .size	__StackLimit, . - __StackLimit
 __StackTop:
     .size	__StackTop, . - __StackTop
-    /* 定义堆区大小 */
+    /* define heap size */
     .section .heap
     .align 3
-    .equ	Heap_Size, 0x800
+    .equ	Heap_Size, 0x200
     .globl	__HeapBase
     .globl	__HeapLimit
 __HeapBase:
@@ -24,29 +24,28 @@ __HeapBase:
 __HeapLimit:
     .size	__HeapLimit, . - __HeapLimit
     
-    /* 定义中断向量表 */
     .section .isr_vector
     .align 2
     .globl	__isr_vector
 __isr_vector:
-    .word    __StackTop            
-    .word    Reset_Handler         
-    .word    NMI_Handler           
-    .word    HardFault_Handler     
-    .word    MemManage_Handler     
-    .word    BusFault_Handler      
-    .word    UsageFault_Handler    
-    .word    0                     
-    .word    0                    
-    .word    0                     
-    .word    0                    
-    .word    vPortSVCHandler           
-    .word    DebugMon_Handler      
-    .word    0                    
-    .word    xPortPendSVHandler        
-    .word    xPortSysTickHandler       
+    .word    __StackTop
+    .word    Reset_Handler
+    .word    NMI_Handler
+    .word    HardFault_Handler
+    .word    MemManage_Handler
+    .word    BusFault_Handler
+    .word    UsageFault_Handler
+    .word    0
+    .word    0
+    .word    0
+    .word    0
+    .word    vPortSVCHandler
+    .word    DebugMon_Handler
+    .word    0
+    .word    xPortPendSVHandler
+    .word    xPortSysTickHandler
 
-    /* 外部中断向量表 */
+    /* external interrupts */
     .word    WWDG_IRQHandler
     .word    PVD_IRQHandler
     .word    TAMPER_IRQHandler
@@ -97,8 +96,8 @@ __isr_vector:
     .word    0
     .word    0
     .word    0
-                            
-    /* 计算中断向量表大小 */
+
+    /* vector size */
     .size    __isr_vector, . - __isr_vector
 
     .text
@@ -108,19 +107,17 @@ __isr_vector:
     .globl   Reset_Handler
     .type    Reset_Handler, %function
 Reset_Handler:
-    /* 拷贝数据到RAM __extex 代码段结尾，__data_start ,__data_end 数据段开头与结尾 */
     ldr    r1, =__etext
     ldr    r2, =__data_start__
     ldr    r3, =__data_end__
 
-    /* 拷贝数据到 data 数据到RAM中 */
 .flash_to_ram_loop:
     cmp    r2, r3
     ittt   lt
     ldrlt  r0, [r1], #4
     strlt  r0, [r2], #4
     blt    .flash_to_ram_loop
-    /* 清除bss段 */
+    /* clear bss */
     ldr    r0, =0
     ldr    r1, =__bss_start__
     ldr    r2, =__bss_end__
@@ -132,13 +129,12 @@ clear_bss_loop:
     b      clear_bss_loop
 clear_bss_loop_end:
 
-    /* 跳转到主函数 */
+    /* jump to main */
     ldr    r0, =SystemInit
     blx    r0
     ldr    r0, =main
     bx     r0
 
-    /* 退出循环 */    
 exit_loop:
     nop
     b      exit_loop    
@@ -146,7 +142,6 @@ exit_loop:
     .pool
     .size  Reset_Handler, . - Reset_Handler
     
-    /* 宏定义为弱定义，在外部没有定义的时候使用弱定义处理函数 */
     .macro    def_default_handler    handler_name
     .align 1
     .thumb_func
@@ -162,12 +157,8 @@ exit_loop:
     def_default_handler    MemManage_Handler
     def_default_handler    BusFault_Handler
     def_default_handler    UsageFault_Handler
-    def_default_handler    vPortSVCHandler
     def_default_handler    DebugMon_Handler
-    def_default_handler    xPortPendSVHandler
-    def_default_handler    xPortSysTickHandler
     
-    /* 外部中断 */
     def_default_handler    WWDG_IRQHandler
     def_default_handler    PVD_IRQHandler
     def_default_handler    TAMPER_IRQHandler

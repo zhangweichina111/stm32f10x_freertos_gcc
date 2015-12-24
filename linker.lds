@@ -71,8 +71,5 @@ SECTIONS
 	__StackLimit = __StackTop - SIZEOF(.stack_dummy);
 	PROVIDE(__stack = __StackTop);
 	
-	/* 检查数据+堆+栈是否超出RAM */
 	ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
 }
-
-
