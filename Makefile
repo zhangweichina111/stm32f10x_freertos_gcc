@@ -36,6 +36,7 @@ SOURCES				+= main.c
 SOURCES				+= led.c
 SOURCES				+= timer.c
 SOURCES				+= usart.c
+SOURCES				+= printf-stdarg.c
 
 LD_FILE				:= $(DIRECTORY)linker.lds
 ELF_FILE			:= $(DIRECTORY)stm32f10x_freertos.elf
